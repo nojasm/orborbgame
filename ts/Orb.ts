@@ -12,7 +12,7 @@ export class Orb {
 
     flipped: boolean = false;
 
-    colors: string[] = ["white", "#2f8ae9", "#f71836", "#a1afc3", "#c131ff", "#d7c29b", "#ff8d13", "#00ef0b", "#fee305", "#85dae7", "#497928", "#f14aae"];
+    colors: string[] = ["white", "#2f8ae9", "#f71836", "#a1afc3", "#c131ff", "#d7c29b", "#c9ac78", "#ff8d13", "#00ef0b", "#fee305", "#85dae7", "#497928", "#f14aae"];
     mouths: string[] = ["", "norb", "drooling", "hmm", "kiss", "lips", "lips2", "normal", "o", "opened small", "opened", "rect", "sad", "sad2", "scared", "small", "smiling", "smoking", "straight", "talking"];
     eyes: string[] = ["", "angry", "high", "low", "narrow", "normal", "pirate", "sad", "thinking", "wide", "glasses", "cyclops", "anime"];
 
