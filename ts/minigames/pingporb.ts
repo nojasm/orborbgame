@@ -1,3 +1,4 @@
+import { GameState } from "../GameManager.js";
 import { MiniGame } from "../MiniGame.js";
 
 export class PingPorbMiniGame extends MiniGame {
@@ -17,9 +18,7 @@ export class PingPorbMiniGame extends MiniGame {
 
     norbImg: HTMLImageElement|null = null;
 
-    start() {
-        super.start();
-        
+    prepare() {
         this.setPlayerWinsWhenTimeEnds();
 
         this.ballX = this.w / 2;
@@ -27,16 +26,25 @@ export class PingPorbMiniGame extends MiniGame {
         this.ballVX = (Math.random() > 0.5 ? 1 : -1) * 50;
         this.ballVY = (Math.random() - 0.5) * 15;
 
+        this.userBarHeight = this.h / 2;
+
         this.norbImg = document.createElement("img") as HTMLImageElement;
         this.norbImg.src = "res/norb.png";
     }
 
-    update(deltaTime: number) {
+    start() {
+        super.start();
+    }
+
+    update(state: GameState, deltaTime: number) {
         if (!this.ctx) return;
 
         const ballSize = 50;
         const barH = 150;
         const barW = 30;
+
+        //console.log("GAME UPDATE", state, deltaTime);
+        
 
         // Background
         this.ctx.fillStyle = "#223";
@@ -61,35 +69,37 @@ export class PingPorbMiniGame extends MiniGame {
 
 
         // Move ball
-        this.ballX += this.ballVX * deltaTime * this.speed;
-        this.ballY += this.ballVY * deltaTime * this.speed;
-        const maxDeflection = 0.5 + 0.5 * this.difficultyFactor;
+        if (state == GameState.RUNNING) {
+            this.ballX += this.ballVX * deltaTime * this.speed;
+            this.ballY += this.ballVY * deltaTime * this.speed;
+            const maxDeflection = 0.5 + 0.5 * this.difficultyFactor;
 
-        // Vertical bounce
-        if (this.ballY < 200) {this.ballVY *= -1; this.ballY = 200;}
-        else if (this.ballY > (this.h - 200)) {this.ballVY *= -1; this.ballY = this.h - 200;}
-        
-        if (this.ballX < (150 + ballSize / 2)) {
-            // If player bar is close enough, reflect, otherwise fail
-            if (ballPlayerBarDist < (150 / 2)) {
-                this.ballVX *= -1;
-                this.ballX = 150 + ballSize / 2;
-                // Deflect vertically too
-                let deflectionFactor = ballPlayerBarDist / (barH / 2);
-                deflectionFactor = 1 + maxDeflection * deflectionFactor;
-                this.ballVY *= deflectionFactor;
-                this.speed += 2;
-            } else {
-                this.setFail();
-            }
-        } else if (this.ballX > (this.w - (150 + ballSize / 2))) {
-            // If cpu bar is close enough, reflect, otherwise win
-            if (ballCPUBarDist < (150 / 2)) {
-                this.ballVX *= -1;
-                this.ballX = this.w - (150 + ballSize / 2);
-                this.speed += 2;
-            } else {
-                this.setFinish();
+            // Vertical bounce
+            if (this.ballY < 200) {this.ballVY *= -1; this.ballY = 200;}
+            else if (this.ballY > (this.h - 200)) {this.ballVY *= -1; this.ballY = this.h - 200;}
+            
+            if (this.ballX < (150 + ballSize / 2)) {
+                // If player bar is close enough, reflect, otherwise fail
+                if (ballPlayerBarDist < (150 / 2)) {
+                    this.ballVX *= -1;
+                    this.ballX = 150 + ballSize / 2;
+                    // Deflect vertically too
+                    let deflectionFactor = ballPlayerBarDist / (barH / 2);
+                    deflectionFactor = 1 + maxDeflection * deflectionFactor;
+                    this.ballVY *= deflectionFactor;
+                    this.speed += 2;
+                } else {
+                    this.setFail();
+                }
+            } else if (this.ballX > (this.w - (150 + ballSize / 2))) {
+                // If cpu bar is close enough, reflect, otherwise win
+                if (ballCPUBarDist < (150 / 2)) {
+                    this.ballVX *= -1;
+                    this.ballX = this.w - (150 + ballSize / 2);
+                    this.speed += 2;
+                } else {
+                    this.setFinish();
+                }
             }
         }
 

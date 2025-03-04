@@ -1,3 +1,4 @@
+import { GameState } from "../GameManager.js";
 import { MiniGame } from "../MiniGame.js";
 export class PingPorbMiniGame extends MiniGame {
     constructor() {
@@ -14,22 +15,26 @@ export class PingPorbMiniGame extends MiniGame {
         this.speed = 25;
         this.norbImg = null;
     }
-    start() {
-        super.start();
+    prepare() {
         this.setPlayerWinsWhenTimeEnds();
         this.ballX = this.w / 2;
         this.ballY = this.h / 2;
         this.ballVX = (Math.random() > 0.5 ? 1 : -1) * 50;
         this.ballVY = (Math.random() - 0.5) * 15;
+        this.userBarHeight = this.h / 2;
         this.norbImg = document.createElement("img");
         this.norbImg.src = "res/norb.png";
     }
-    update(deltaTime) {
+    start() {
+        super.start();
+    }
+    update(state, deltaTime) {
         if (!this.ctx)
             return;
         const ballSize = 50;
         const barH = 150;
         const barW = 30;
+        //console.log("GAME UPDATE", state, deltaTime);
         // Background
         this.ctx.fillStyle = "#223";
         this.ctx.fillRect(0, 0, this.w, this.h);
@@ -46,42 +51,44 @@ export class PingPorbMiniGame extends MiniGame {
         let ballPlayerBarDist = Math.abs(this.userBarHeight - this.ballY);
         let ballCPUBarDist = Math.abs(this.cpuBarHeight - this.ballY);
         // Move ball
-        this.ballX += this.ballVX * deltaTime * this.speed;
-        this.ballY += this.ballVY * deltaTime * this.speed;
-        const maxDeflection = 0.5 + 0.5 * this.difficultyFactor;
-        // Vertical bounce
-        if (this.ballY < 200) {
-            this.ballVY *= -1;
-            this.ballY = 200;
-        }
-        else if (this.ballY > (this.h - 200)) {
-            this.ballVY *= -1;
-            this.ballY = this.h - 200;
-        }
-        if (this.ballX < (150 + ballSize / 2)) {
-            // If player bar is close enough, reflect, otherwise fail
-            if (ballPlayerBarDist < (150 / 2)) {
-                this.ballVX *= -1;
-                this.ballX = 150 + ballSize / 2;
-                // Deflect vertically too
-                let deflectionFactor = ballPlayerBarDist / (barH / 2);
-                deflectionFactor = 1 + maxDeflection * deflectionFactor;
-                this.ballVY *= deflectionFactor;
-                this.speed += 2;
+        if (state == GameState.RUNNING) {
+            this.ballX += this.ballVX * deltaTime * this.speed;
+            this.ballY += this.ballVY * deltaTime * this.speed;
+            const maxDeflection = 0.5 + 0.5 * this.difficultyFactor;
+            // Vertical bounce
+            if (this.ballY < 200) {
+                this.ballVY *= -1;
+                this.ballY = 200;
             }
-            else {
-                this.setFail();
+            else if (this.ballY > (this.h - 200)) {
+                this.ballVY *= -1;
+                this.ballY = this.h - 200;
             }
-        }
-        else if (this.ballX > (this.w - (150 + ballSize / 2))) {
-            // If cpu bar is close enough, reflect, otherwise win
-            if (ballCPUBarDist < (150 / 2)) {
-                this.ballVX *= -1;
-                this.ballX = this.w - (150 + ballSize / 2);
-                this.speed += 2;
+            if (this.ballX < (150 + ballSize / 2)) {
+                // If player bar is close enough, reflect, otherwise fail
+                if (ballPlayerBarDist < (150 / 2)) {
+                    this.ballVX *= -1;
+                    this.ballX = 150 + ballSize / 2;
+                    // Deflect vertically too
+                    let deflectionFactor = ballPlayerBarDist / (barH / 2);
+                    deflectionFactor = 1 + maxDeflection * deflectionFactor;
+                    this.ballVY *= deflectionFactor;
+                    this.speed += 2;
+                }
+                else {
+                    this.setFail();
+                }
             }
-            else {
-                this.setFinish();
+            else if (this.ballX > (this.w - (150 + ballSize / 2))) {
+                // If cpu bar is close enough, reflect, otherwise win
+                if (ballCPUBarDist < (150 / 2)) {
+                    this.ballVX *= -1;
+                    this.ballX = this.w - (150 + ballSize / 2);
+                    this.speed += 2;
+                }
+                else {
+                    this.setFinish();
+                }
             }
         }
         this.hasClicked = false;

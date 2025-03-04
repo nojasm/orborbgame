@@ -15,6 +15,14 @@ var minigames = [
     PingPorbMiniGame,
     SlingShotMiniGame
 ];
+export var GameState;
+(function (GameState) {
+    GameState[GameState["NONE"] = 0] = "NONE";
+    GameState[GameState["PREPARING"] = 1] = "PREPARING";
+    GameState[GameState["RUNNING"] = 2] = "RUNNING";
+    GameState[GameState["FAILED"] = 3] = "FAILED";
+})(GameState || (GameState = {}));
+;
 export class GameManager {
     constructor() {
         this.currentGame = null;
@@ -24,26 +32,23 @@ export class GameManager {
         this.w = 0;
         this.h = 0;
         this.score = 0;
-        this.running = false;
-        this.failedGame = false;
+        //running: boolean = false;
+        //failedGame: boolean = false;
+        this.state = GameState.NONE;
         this.miniGameStartTime = 0;
+        this.miniGamePrepareStartTime = 0;
         this.eventStack = [];
         this.lastMousePos = [0, 0];
         this.difficultyFactor = 0; // Goes from 0 - 1, to make the game harder over time
         this.nGamesPlayed = 0;
         this.lastPlayedMiniGames = [];
         this.allMiniGames = [];
-        this.music = new Music();
-    }
-    start() {
         this.score = 0;
-        this.running = true;
-        this.failedGame = false;
         this.lastPlayedMiniGames = [];
         this.allMiniGames = minigames;
-        this.startNextGame();
+        this.music = new Music();
     }
-    calculatedifficultyFactor(afterNGames) {
+    calculateDifficultyFactor(afterNGames) {
         return -Math.exp(-0.05 * afterNGames) + 1;
     }
     /*getLargestScores(): Promise<any> {
@@ -60,18 +65,20 @@ export class GameManager {
             },
             body: JSON.stringify({score: 111})});
     }*/
-    startNextGame() {
+    prepareNextGame() {
         var _a;
+        this.state = GameState.PREPARING;
         this.eventStack = [];
-        this.difficultyFactor = this.calculatedifficultyFactor(this.nGamesPlayed);
-        this.miniGameStartTime = Date.now();
+        this.difficultyFactor = this.calculateDifficultyFactor(this.nGamesPlayed);
         this.currentGame = this.getNextRandomGame();
         this.currentGame.difficultyFactor = this.difficultyFactor;
+        this.currentGame.state = this.state;
+        this.miniGamePrepareStartTime = Date.now();
         this.w = this.canvas.width;
         this.h = this.canvas.height;
         this.currentGame.w = this.w;
         this.currentGame.h = this.h;
-        this.currentGame.start();
+        this.currentGame.prepare();
         (_a = this.ctx) === null || _a === void 0 ? void 0 : _a.clearRect(0, 0, this.w, this.h);
         if (this.currentGame.constructor.name === "SortOrbsMiniGame")
             this.music.switchTo(Track.SORTING);
@@ -83,6 +90,14 @@ export class GameManager {
             this.music.switchTo(Track.ORBULATE);
         else
             this.music.switchTo(Track.DEFAULT);
+        console.log("PREPARE NEXT GAME");
+    }
+    startNextGame() {
+        console.log("START NEXT GAME");
+        this.state = GameState.RUNNING;
+        this.miniGameStartTime = Date.now();
+        this.currentGame.state = this.state;
+        this.currentGame.start();
     }
     getNextRandomGame() {
         /*
@@ -126,25 +141,7 @@ export class GameManager {
             let picked = this.lastPlayedMiniGames[chosenIndex];
             this.lastPlayedMiniGames.splice(chosenIndex, 1);
             this.lastPlayedMiniGames.unshift(picked);
-            /*console.log("Picked index", chosenIndex, "for the next game. it is", this.allMiniGames[chosenIndex].name);
-            
-
-            //let rmg: MiniGame = new minigames[Math.floor(Math.random() * minigames.length)](this.difficultyFactor);
-            let mgIndex: number = minigames.map(x => x.name).indexOf(this.lastPlayedMiniGames[chosenIndex]);
-            console.log("IN LAST PLAYED, INDEX", chosenIndex, "WHICH IS INDEX", mgIndex, "IN ALL GAMES");
-            
-            let rmg: MiniGame = new minigames[chosenIndex](this.difficultyFactor);
-            //this.lastPlayedMiniGames.push();
-            console.log("Next MiniGame is", rmg.constructor.name);
-
-            console.log("MOVING:", this.lastPlayedMiniGames, chosenIndex);
-            // Move minigame to front of last-played-minigames-list
-            let indexInLastPlayed = this.lastPlayedMiniGames.indexOf(rmg.constructor.name)
-
-            console.log("RESULT:", this.lastPlayedMiniGames);*/
             return rmg;
-            //console.log(this.lastPlayedMiniGames);
-            //return new minigames[0](this.difficultyFactor);
         }
     }
     handleEvents() {
@@ -155,24 +152,37 @@ export class GameManager {
         this.eventStack = [];
     }
     update(deltaTime) {
-        if (this.running && this.currentGame && this.ctx) {
+        if ((this.state == GameState.RUNNING || this.state == GameState.PREPARING) && this.currentGame && this.ctx) {
             // Calculate how much time is left
             let totalTimePerMiniGame = 5;
-            let timeLeftSeconds = totalTimePerMiniGame - ((Date.now() - this.miniGameStartTime) / 1000);
-            this.currentGame.secondsSinceStart = (Date.now() - this.miniGameStartTime) / 1000;
+            let timeLeftSeconds;
+            if (this.state == GameState.RUNNING) {
+                timeLeftSeconds = totalTimePerMiniGame - ((Date.now() - this.miniGameStartTime) / 1000);
+                this.currentGame.secondsSinceStart = (Date.now() - this.miniGameStartTime) / 1000;
+                this.currentGame.secondsSinceStart = (Date.now() - this.miniGameStartTime) / 1000;
+            }
+            else {
+                timeLeftSeconds = totalTimePerMiniGame;
+                this.currentGame.secondsSinceStart = 0;
+            }
+            this.currentGame.secondsSincePrepare = (Date.now() - this.miniGamePrepareStartTime) / 1000;
+            this.currentGame.state = this.state;
             // If the time runs out and the game is not set to finish yet,
             // let it fail automatically
             if (timeLeftSeconds <= 0) {
                 if (this.currentGame.playerWinsWhenTimeEnds) {
-                    let addScore = (timeLeftSeconds / totalTimePerMiniGame) * 100;
-                    this.score += addScore;
+                    // There is no need to dynamically calculate the added score,
+                    // as you either win or don't if <playerWinsWhenTimeEnds> is TRUE.
+                    this.score += 50;
                     this.nGamesPlayed++;
-                    this.startNextGame();
+                    this.prepareNextGame();
+                    setTimeout(() => {
+                        this.startNextGame();
+                    }, 1000);
                 }
                 else {
                     this.currentGame.setFail();
-                    this.failedGame = true;
-                    this.running = false;
+                    this.state = GameState.FAILED;
                     this.music.switchTo(Track.FAIL);
                 }
                 return;
@@ -184,7 +194,7 @@ export class GameManager {
             this.currentGame.ctx = this.ctx;
             this.currentGame.w = this.w;
             this.currentGame.h = this.h;
-            this.currentGame.update(deltaTime);
+            this.currentGame.update(this.state, deltaTime);
             // Header background
             this.ctx.beginPath();
             this.ctx.moveTo(0.00 * this.w, 0);
@@ -232,17 +242,19 @@ export class GameManager {
                 let addScore = (timeLeftSeconds / totalTimePerMiniGame) * 100;
                 this.score += addScore;
                 this.nGamesPlayed++;
-                this.startNextGame();
+                this.prepareNextGame();
+                setTimeout(() => {
+                    this.startNextGame();
+                }, 1000);
             }
             else if (this.currentGame.failed) {
-                this.failedGame = true;
-                this.running = false;
+                this.state = GameState.FAILED;
                 this.music.switchTo(Track.FAIL);
             }
         }
     }
     event(ev) {
-        if (this.running && this.currentGame) {
+        if ((this.state == GameState.RUNNING || this.state == GameState.PREPARING) && this.currentGame) {
             this.eventStack.push(ev);
         }
     }

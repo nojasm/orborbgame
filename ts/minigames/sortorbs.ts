@@ -21,9 +21,7 @@ export class SortOrbsMiniGame extends MiniGame {
 
     orbs: Orb[] = [];
 
-    start() {
-        super.start();
-        
+    prepare() {
         this.lastMousePos = null;
         this.currentlyDraggingOrbIndex = null;
 
@@ -40,6 +38,10 @@ export class SortOrbsMiniGame extends MiniGame {
         }
     }
 
+    start() {
+        super.start();
+    }
+
     // Check if all blue orbs are left and red orbs are right
     allInCorrectPlace(): boolean {
         return this.orbs.every((e) => {
@@ -53,10 +55,6 @@ export class SortOrbsMiniGame extends MiniGame {
         if (this.allInCorrectPlace() && this.currentlyDraggingOrbIndex === null) {
             super.setFinish();
         }
-
-        // Background
-        this.ctx.fillStyle = "#223";
-        this.ctx.fillRect(0, 0, this.w, this.h);
 
         // Blue zone (left)
         this.ctx.fillStyle = "#748ee9";
@@ -88,14 +86,16 @@ export class SortOrbsMiniGame extends MiniGame {
             
             // Draw normal orb
             } else {
+                let sizeMod = Math.pow(Math.min(this.secondsSincePrepare, 1), 3);
+
                 this.ctx!.beginPath();
                 this.ctx!.fillStyle = orb.color == OrbColor.BLUE ? "hsl(250deg, 90%, 40%)" : "hsl(0deg, 90%, 40%)";
-                this.ctx!.arc(orb.posX * this.w, orb.posY * this.h, 45, 0, 2 * Math.PI);
+                this.ctx!.arc(orb.posX * this.w, orb.posY * this.h, 45 * sizeMod, 0, 2 * Math.PI);
                 this.ctx!.fill();
 
                 this.ctx!.beginPath();
                 this.ctx!.fillStyle = orb.color == OrbColor.BLUE ? "hsl(250deg, 100%, 55%)" : "hsl(0deg, 100%, 55%)";
-                this.ctx!.arc(orb.posX * this.w, orb.posY * this.h, 40, 0, 2 * Math.PI);
+                this.ctx!.arc(orb.posX * this.w, orb.posY * this.h, 40 * sizeMod, 0, 2 * Math.PI);
                 this.ctx!.fill();
             }
         });

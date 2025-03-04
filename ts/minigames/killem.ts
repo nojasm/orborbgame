@@ -1,3 +1,4 @@
+import { GameState } from "../GameManager.js";
 import { MiniGame } from "../MiniGame.js";
 
 export class KillEmMiniGame extends MiniGame {
@@ -11,8 +12,7 @@ export class KillEmMiniGame extends MiniGame {
 
     gunShotSound: HTMLAudioElement|null = null;
     
-    start() {
-        super.start();
+    prepare() {
         let n = 5 + (Math.random() * this.difficultyFactor * 10);
         this.norbs = [];
         for (var i = 0; i < n; i++) {
@@ -28,13 +28,18 @@ export class KillEmMiniGame extends MiniGame {
         this.gunShotSound = new Audio("res/sounds/gun.mp3");
 
         this.secondsSinceLastShot = null;
+        this.lastMousePos = [this.w / 2, this.h / 2];
+    }
+
+    start() {
+        super.start();
     }
 
     playGunSound() {
         (this.gunShotSound?.cloneNode(true) as HTMLAudioElement).play();
     }
 
-    update(deltaTime: number) {
+    update(state: GameState, deltaTime: number) {
         if (!this.ctx) return;
 
         // If all norbs are null, the game is done
@@ -49,19 +54,21 @@ export class KillEmMiniGame extends MiniGame {
         if (this.secondsSinceLastShot !== null)
             this.secondsSinceLastShot += deltaTime;
 
-        if (this.hasClicked) {
+        if (state == GameState.RUNNING && this.hasClicked) {
             this.secondsSinceLastShot = 0;
             this.playGunSound();
         }
+
+        let pt = Math.pow(Math.min(this.secondsSincePrepare, 1), 3);
 
         this.norbs.forEach((norb: any, i: number) => {
             if (norb === null) return;
             
             let x = norb[0] * this.w;
             let y = norb[1] * this.h;
-            let r = norb[2];
+            let r = norb[2] * pt;
 
-            if (this.lastMousePos) {
+            if (state == GameState.RUNNING && this.lastMousePos) {
                 let d = Math.sqrt(Math.pow(this.lastMousePos[0] - x, 2) + Math.pow((this.lastMousePos[1] - y), 2));
                 
                 if (d < r) {
@@ -85,6 +92,9 @@ export class KillEmMiniGame extends MiniGame {
         // Gun
         let gunOffsetX = 50 + 100 * (this.lastMousePos[0] / this.w);
         let gunOffsetY = 50 + 100 * (this.lastMousePos[1] / this.h);
+
+        if (this.secondsSincePrepare < 1.5)
+            gunOffsetX -= Math.pow(1 - this.secondsSincePrepare / 1.5, 5) * 500;
 
         if (this.secondsSinceLastShot !== null && this.lastMousePos !== null) {
             gunOffsetX -= 20 * -Math.exp(-5 * this.secondsSinceLastShot);

@@ -1,3 +1,4 @@
+import { GameState } from "../GameManager.js";
 import { MiniGame } from "../MiniGame.js";
 export class ShakeWormMiniGame extends MiniGame {
     constructor() {
@@ -6,11 +7,13 @@ export class ShakeWormMiniGame extends MiniGame {
         this.traveledDistance = 0;
         this.neededDistance = 25000;
     }
-    start() {
-        super.start();
+    prepare() {
         this.lastMousePos = null;
         this.traveledDistance = 0;
         this.neededDistance = 25000 + 50000 * this.difficultyFactor;
+    }
+    start() {
+        super.start();
     }
     drawBackground() {
         // Background
@@ -55,7 +58,7 @@ export class ShakeWormMiniGame extends MiniGame {
             this.ctx.stroke();
         });
     }
-    update(deltaTime) {
+    update(state, deltaTime) {
         if (!this.ctx)
             return;
         if (this.traveledDistance >= this.neededDistance) {
@@ -118,7 +121,8 @@ export class ShakeWormMiniGame extends MiniGame {
     }
     event(ev) {
         if (ev.type == "mousemove") {
-            this.traveledDistance += Math.abs(ev.movementX);
+            if (this.state == GameState.RUNNING)
+                this.traveledDistance += Math.abs(ev.movementX);
             this.lastMousePos = [ev.x, ev.y];
         }
     }

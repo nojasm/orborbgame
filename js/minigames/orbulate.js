@@ -1,3 +1,4 @@
+import { GameState } from "../GameManager.js";
 import { MiniGame } from "../MiniGame.js";
 export class OrbulateMiniGame extends MiniGame {
     constructor() {
@@ -8,12 +9,14 @@ export class OrbulateMiniGame extends MiniGame {
         this.secondsSinceLastClick = 1;
         this.titleRotFromAngle = 0;
     }
-    start() {
+    prepare() {
         this.lastMousePos = null;
         this.hasClicked = false;
         this.progress = 0.2;
         this.secondsSinceLastClick = 1.0;
         this.titleRotFromAngle = 0.0;
+    }
+    start() {
         super.start();
     }
     interpolatePoints(points, x) {
@@ -33,10 +36,11 @@ export class OrbulateMiniGame extends MiniGame {
         let rel = (x - points[lowerIndex][0]) / (points[lowerIndex + 1][0] - points[lowerIndex][0]);
         return points[lowerIndex][1] + rel * (points[lowerIndex + 1][1] - points[lowerIndex][1]);
     }
-    update(deltaTime) {
+    update(state, deltaTime) {
         if (!this.ctx)
             return;
-        this.secondsSinceLastClick += deltaTime;
+        if (this.state == GameState.RUNNING)
+            this.secondsSinceLastClick += deltaTime;
         // Mod is an exponentially decreasing value that resets with each click and then goes down quickly
         let mod = 0.7 * Math.exp(-(3.0) * (this.secondsSinceLastClick - 0.5));
         if (this.progress >= 1.0) {
@@ -46,12 +50,14 @@ export class OrbulateMiniGame extends MiniGame {
             super.setFail();
         }
         // Slowly reduce progress
-        this.progress -= deltaTime / (13 - 5 * this.difficultyFactor);
-        if (this.hasClicked) {
-            this.progress += (0.07 - 0.03 * this.difficultyFactor);
+        if (this.state == GameState.RUNNING) {
+            this.progress -= deltaTime / (13 - 5 * this.difficultyFactor);
+            if (this.hasClicked) {
+                this.progress += (0.07 - 0.03 * this.difficultyFactor);
+            }
         }
         // Background
-        this.ctx.fillStyle = "#744";
+        this.ctx.fillStyle = "#533";
         this.ctx.fillRect(0, 0, this.w, this.h);
         let orbulation = this.interpolatePoints([[0.0, 0.0], [0.2, 0.2], [0.4, 0.38], [0.6, 0.52], [0.75, 0.59], [0.8, 0.61], [0.85, 0.62], [0.9, 0.69], [1.0, 1.0]], this.progress) * 55;
         // Draw Orbs border
@@ -68,20 +74,24 @@ export class OrbulateMiniGame extends MiniGame {
         this.ctx.fill();
         // Title that moves with each click
         let titleSize = (mod * 0.5) + 1;
+        let titleSizeMod = Math.pow(Math.min(this.secondsSincePrepare, 1), 5);
         let titleRot = this.titleRotFromAngle * mod;
         this.ctx.save();
         this.ctx.translate(this.w / 2, 300);
         this.ctx.rotate(titleRot);
-        this.ctx.scale(titleSize, titleSize);
+        this.ctx.scale(titleSize * titleSizeMod, titleSize * titleSizeMod);
         this.ctx.fillStyle = "red";
         this.ctx.font = "50px Arial Black";
         this.ctx.textAlign = "center";
         this.ctx.fillText("ORBULATE", 0, 0);
         this.ctx.restore();
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "30px Arial Black";
+        this.ctx.fillText("(click to orbulate)", this.w / 2 + (20 * Math.sin(7 * this.secondsSincePrepare)), this.h / 2 + 200 + (10 * Math.sin(4 * this.secondsSincePrepare)));
         this.hasClicked = false;
     }
     event(ev) {
-        if (ev.type == "click") {
+        if (ev.type == "click" && this.state == GameState.RUNNING) {
             this.hasClicked = true;
             this.titleRotFromAngle = Math.random() * 0.2 - 0.1;
             this.secondsSinceLastClick = 0;

@@ -1,4 +1,4 @@
-import {GameManager} from "./GameManager.js"
+import {GameManager, GameState} from "./GameManager.js"
 import { Music, Track } from "./Music.js";
 import { Orb, Transform } from "./Orb.js";
 import { Player } from "./Player.js";
@@ -92,7 +92,7 @@ function openCurtains() {
 
 var lastGameUpdateTime: number|null = null;
 function gameLoop() {
-    if (game.running && !game.failedGame) {
+    if (game.state == GameState.RUNNING || game.state == GameState.PREPARING) {
         if (lastGameUpdateTime === null)
             lastGameUpdateTime = Date.now();
 
@@ -102,7 +102,7 @@ function gameLoop() {
         game.handleEvents();
         game.update((now - lastGameUpdateTime) / 1000);
         lastGameUpdateTime = now;
-    } else if (game.failedGame) {
+    } else if (game.state == GameState.FAILED) {
         lastGameUpdateTime = null;
 
         showFailScreen(game.score);
@@ -149,8 +149,14 @@ function setup() {
             game.canvas.onmousedown = (event) => { game.event(event); };
             game.canvas.onmouseup = (event) => { game.event(event); };
     
-            game.start();
+            game.prepareNextGame();
             openCurtains();
+            setTimeout(() => {
+                //console.log("STARTING NEXT GAME");
+                
+                game.startNextGame();
+            }, 1000);
+
             gameLoop();
         })
     });

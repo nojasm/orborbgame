@@ -1,3 +1,4 @@
+import { GameState } from "../GameManager.js";
 import { MiniGame } from "../MiniGame.js";
 
 export class SlingShotMiniGame extends MiniGame {
@@ -10,9 +11,9 @@ export class SlingShotMiniGame extends MiniGame {
 
     isDragging: boolean = false;
 
-    startDraggingPos: any[] = [0, 0];
+    startDraggingPos: any = null;
 
-    start() {
+    prepare() {
         this.norbImg = document.createElement("img");
         this.norbImg.src = "res/norb.png";
         let nNorbs = 3 + Math.random() * 3 + (Math.random() * 5 * this.difficultyFactor);
@@ -23,7 +24,9 @@ export class SlingShotMiniGame extends MiniGame {
                 150 + (300 * Math.random())
             ]);
         }
+    }
 
+    start() {
         super.start();
     }
 
@@ -33,7 +36,7 @@ export class SlingShotMiniGame extends MiniGame {
         return x;
     }
 
-    update(deltaTime: number) {
+    update(state: GameState, deltaTime: number) {
         if (!this.ctx) return;
 
         if (this.orbs.every(o => o === null)) {
@@ -68,27 +71,12 @@ export class SlingShotMiniGame extends MiniGame {
             });
         });
 
-        // Orbs
-        const orbSize = 70;
+        // Norbs
+        const orbSize = 70 * Math.pow(Math.min(this.secondsSincePrepare, 1), 3);
         this.orbs.forEach((orb) => {
             if (orb === null) return;
             this.ctx?.drawImage(this.norbImg!, orb[0] - orbSize / 2, orb[1] - orbSize / 2, orbSize, orbSize);
         });
-
-        // Slingshot slingy part
-        this.ctx.beginPath();
-        this.ctx.moveTo((this.w / 2) - 100, this.h - 250);
-        let sspOffsetX = 0;
-        let sspOffsetY = 0;
-
-        if (this.isDragging) {
-            sspOffsetX = ((this.w / 2) - this.lastMousePos[0]) * 0.3;
-            sspOffsetY = ((this.h - 250) - this.lastMousePos[1]) * 0.3;
-        }
-        this.ctx.quadraticCurveTo(this.w / 2 - this.clamp(sspOffsetX, -20, 20), this.h - 200 - this.clamp(sspOffsetY, -20, 20), this.w / 2 + 100, this.h - 250);
-        this.ctx.lineWidth = 15;
-        this.ctx.strokeStyle = "orange";
-        this.ctx.stroke();
 
         // Slingshot body
         this.ctx.beginPath();
@@ -100,6 +88,29 @@ export class SlingShotMiniGame extends MiniGame {
         this.ctx.lineWidth = 20;
         this.ctx.strokeStyle = "brown";
         this.ctx.stroke();
+
+        // Slingshot slingy part
+        let sspOffsetX = 0;
+        let sspOffsetY = 0;
+
+        if (this.isDragging) {
+            sspOffsetX = (this.startDraggingPos[0] - this.lastMousePos[0]) * 0.1;
+            sspOffsetY = (this.startDraggingPos[1] - this.lastMousePos[1]) * 0.1;
+
+            // Draw bullet on the slingy part
+            this.ctx.beginPath();
+            this.ctx.fillStyle = this.bullets.length % 2 == 0 ? "red" : "blue";
+            this.ctx.arc(this.w / 2 - this.clamp(sspOffsetX, -20, 20), this.h - 230 - this.clamp(sspOffsetY, -20, 20), 15, 0, 2 * Math.PI);
+            this.ctx.fill();
+        }
+
+        this.ctx.beginPath();
+        this.ctx.moveTo((this.w / 2) - 100, this.h - 250);
+        this.ctx.quadraticCurveTo(this.w / 2 - this.clamp(sspOffsetX, -20, 20), this.h - 200 - this.clamp(sspOffsetY, -20, 20), this.w / 2 + 100, this.h - 250);
+        this.ctx.lineWidth = 10;
+        this.ctx.strokeStyle = "orange";
+        this.ctx.stroke();
+
 
         // Show rough shooting line
         if (this.isDragging) {
@@ -124,16 +135,20 @@ export class SlingShotMiniGame extends MiniGame {
             this.lastMousePos = [(ev as MouseEvent).x, (ev as MouseEvent).y];
         } else if (ev.type == "mousedown") {
             this.lastMousePos = [(ev as MouseEvent).x, (ev as MouseEvent).y];
-            this.isDragging = true;
-            this.startDraggingPos = this.lastMousePos;
+            if (this.state == GameState.RUNNING) {
+                this.isDragging = true;
+                this.startDraggingPos = this.lastMousePos;
+            }
         } else if (ev.type == "mouseup") {
             this.isDragging = false;
 
-            // SHOOT!
-            let bvx: number = this.startDraggingPos[0] - this.lastMousePos[0];
-            let bvy: number = this.startDraggingPos[1] - this.lastMousePos[1];
-            let bullet = [this.w / 2, this.h - 250, bvx * 10, bvy * 10];
-            this.bullets.push(bullet);
+            if (this.state == GameState.RUNNING && this.startDraggingPos !== null && this.lastMousePos !== null) {
+                // SHOOT!
+                let bvx: number = this.startDraggingPos[0] - this.lastMousePos[0];
+                let bvy: number = this.startDraggingPos[1] - this.lastMousePos[1];
+                let bullet = [this.w / 2, this.h - 250, bvx * 10, bvy * 10];
+                this.bullets.push(bullet);
+            }
         }
         
     }

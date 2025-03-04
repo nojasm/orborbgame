@@ -1,3 +1,4 @@
+import { GameState } from "../GameManager.js";
 import { MiniGame } from "../MiniGame.js";
 export class KillEmMiniGame extends MiniGame {
     constructor() {
@@ -10,8 +11,7 @@ export class KillEmMiniGame extends MiniGame {
         this.secondsSinceLastShot = null;
         this.gunShotSound = null;
     }
-    start() {
-        super.start();
+    prepare() {
         let n = 5 + (Math.random() * this.difficultyFactor * 10);
         this.norbs = [];
         for (var i = 0; i < n; i++) {
@@ -24,12 +24,16 @@ export class KillEmMiniGame extends MiniGame {
         this.norbImg.src = "res/norb.png";
         this.gunShotSound = new Audio("res/sounds/gun.mp3");
         this.secondsSinceLastShot = null;
+        this.lastMousePos = [this.w / 2, this.h / 2];
+    }
+    start() {
+        super.start();
     }
     playGunSound() {
         var _a;
         ((_a = this.gunShotSound) === null || _a === void 0 ? void 0 : _a.cloneNode(true)).play();
     }
-    update(deltaTime) {
+    update(state, deltaTime) {
         if (!this.ctx)
             return;
         // If all norbs are null, the game is done
@@ -41,17 +45,18 @@ export class KillEmMiniGame extends MiniGame {
         this.ctx.fillRect(0, 0, this.w, this.h);
         if (this.secondsSinceLastShot !== null)
             this.secondsSinceLastShot += deltaTime;
-        if (this.hasClicked) {
+        if (state == GameState.RUNNING && this.hasClicked) {
             this.secondsSinceLastShot = 0;
             this.playGunSound();
         }
+        let pt = Math.pow(Math.min(this.secondsSincePrepare, 1), 3);
         this.norbs.forEach((norb, i) => {
             if (norb === null)
                 return;
             let x = norb[0] * this.w;
             let y = norb[1] * this.h;
-            let r = norb[2];
-            if (this.lastMousePos) {
+            let r = norb[2] * pt;
+            if (state == GameState.RUNNING && this.lastMousePos) {
                 let d = Math.sqrt(Math.pow(this.lastMousePos[0] - x, 2) + Math.pow((this.lastMousePos[1] - y), 2));
                 if (d < r) {
                     // Mouse is over circle, so highlight it
@@ -71,6 +76,8 @@ export class KillEmMiniGame extends MiniGame {
         // Gun
         let gunOffsetX = 50 + 100 * (this.lastMousePos[0] / this.w);
         let gunOffsetY = 50 + 100 * (this.lastMousePos[1] / this.h);
+        if (this.secondsSincePrepare < 1.5)
+            gunOffsetX -= Math.pow(1 - this.secondsSincePrepare / 1.5, 5) * 500;
         if (this.secondsSinceLastShot !== null && this.lastMousePos !== null) {
             gunOffsetX -= 20 * -Math.exp(-5 * this.secondsSinceLastShot);
             gunOffsetY -= 30 * -Math.exp(-5 * this.secondsSinceLastShot);
