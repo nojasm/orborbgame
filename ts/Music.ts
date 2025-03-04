@@ -43,11 +43,12 @@ export class Music {
             buffers.forEach((buffer: AudioBuffer, index: number) => {
                 this.tracks[[Track.MENU, Track.STUDIO, Track.DEFAULT, Track.FAIL, Track.SORTING, Track.FINDNORB, Track.KILLEM, Track.ORBULATE][index]] = buffer;
             });
-    
-            // Play next buffer if current one ends
-            this.playBuffer(this.tracks[this.currentTrack]);
         });
-        
+    }
+
+    start() {
+        // Play next buffer if current one ends
+        this.playBuffer(this.tracks[this.currentTrack]);
     }
 
     playBuffer(buffer: AudioBuffer) {

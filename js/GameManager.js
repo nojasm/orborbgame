@@ -90,10 +90,8 @@ export class GameManager {
             this.music.switchTo(Track.ORBULATE);
         else
             this.music.switchTo(Track.DEFAULT);
-        console.log("PREPARE NEXT GAME");
     }
     startNextGame() {
-        console.log("START NEXT GAME");
         this.state = GameState.RUNNING;
         this.miniGameStartTime = Date.now();
         this.currentGame.state = this.state;
@@ -117,9 +115,7 @@ export class GameManager {
         if (notPlayedAtAllMiniGames.length > 0) {
             let picked = notPlayedAtAllMiniGames[Math.floor(Math.random() * notPlayedAtAllMiniGames.length)].name;
             let indexFromMiniGameName = this.allMiniGames.findIndex((mg) => mg.name === picked);
-            console.log("Picking", picked, "at index", indexFromMiniGameName, "because it hasn't been played yet at all");
             let rmg = new minigames[indexFromMiniGameName](this.difficultyFactor);
-            console.log("Next MiniGame is", rmg.constructor.name);
             this.lastPlayedMiniGames.unshift(picked);
             return rmg;
         }

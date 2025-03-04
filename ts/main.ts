@@ -3,6 +3,7 @@ import { Music, Track } from "./Music.js";
 import { Orb, Transform } from "./Orb.js";
 import { Player } from "./Player.js";
 
+
 var game: GameManager;
 
 var studioIsOpen: boolean = false;
@@ -133,6 +134,11 @@ function setup() {
     game.player.name = "orbian";
     game.player.orb = new Orb();
 
+    // Start music button
+    document.getElementById("front-card__music-start")?.addEventListener("click", (event) => {
+        game.music.start();
+    });
+
     // PLAY button
     document.getElementById("front-card__play")?.addEventListener("click", (event) => {
         playUIClickSound();
@@ -202,6 +208,8 @@ function changeValueFromStudio(key: string, value: number) {
         game.player!.orb!.currentMouth = getNextEntry(game.player!.orb?.mouths!, game.player!.orb!.currentMouth, value === -1);
     } else if (key === "eyes") {
         game.player!.orb!.currentEyes = getNextEntry(game.player!.orb?.eyes!, game.player!.orb!.currentEyes, value === -1);
+    } else if (key === "misc") {
+        game.player!.orb!.currentMisc = getNextEntry(game.player!.orb?.miscs!, game.player!.orb!.currentMisc, value === -1);
     }
     
     game.player!.orb!.updateLocalStorage();
@@ -281,6 +289,8 @@ Object.keys(transformElements).forEach((e) => {
                 transform = game.player?.orb?.mouthTransform!;
             } else if (parent == "eyes") {
                 transform = game.player?.orb?.eyesTransform!;
+            } else if (parent == "misc") {
+                transform = game.player?.orb?.miscTransform!;
             }
 
             let btn = (event.target as HTMLElement).classList[0];

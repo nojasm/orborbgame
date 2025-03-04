@@ -12,26 +12,33 @@ export class Orb {
         this.colors = ["white", "#2f8ae9", "#f71836", "#a1afc3", "#c131ff", "#c9ac78", "#ff8d13", "#00ef0b", "#fee305", "#85dae7", "#497928", "#f14aae"];
         this.mouths = ["", "norb", "drooling", "hmm", "kiss", "lips", "lips2", "normal", "o", "opened small", "opened", "rect", "sad", "sad2", "scared", "small", "smiling", "smoking", "straight", "talking"];
         this.eyes = ["", "angry", "high", "low", "narrow", "normal", "pirate", "sad", "thinking", "wide", "glasses", "cyclops", "anime"];
+        this.miscs = ["", "amogus", "beard", "fuckmaga", "hat", "red"];
         this.mouthTransform = new Transform();
         this.eyesTransform = new Transform();
+        this.miscTransform = new Transform();
         this.mouthImages = {}; // {name: HTMLImageElement, ...}
         this.eyesImages = {}; // {name: HTMLImageElement, ...}
-        if (localStorage.getItem("orb") && false) {
+        this.miscImages = {}; // {name: HTMLImageElement, ...}
+        if (localStorage.getItem("orb")) {
             let lsOrb = JSON.parse(localStorage.getItem("orb"));
             this.color = lsOrb.color;
             this.currentMouth = lsOrb.mouth;
             this.currentEyes = lsOrb.eyes;
+            this.currentMisc = lsOrb.misc;
             this.flipped = lsOrb.flipped;
             this.eyesTransform = lsOrb.eyesTransform || new Transform();
             this.mouthTransform = lsOrb.mouthTransform || new Transform();
+            this.miscTransform = lsOrb.miscTransform || new Transform();
         }
         else {
             this.color = this.colors[0];
             this.currentMouth = this.mouths[6];
             this.currentEyes = this.eyes[5];
+            this.currentMisc = this.miscs[0];
             //this.flipped = false;
             this.eyesTransform = new Transform();
             this.mouthTransform = new Transform();
+            this.miscTransform = new Transform();
             this.updateLocalStorage();
         }
         this.mouths.forEach((m) => {
@@ -46,19 +53,28 @@ export class Orb {
             this.eyesImages[e] = document.createElement("img");
             this.eyesImages[e].src = "res/orbs/eyes/" + e + ".png";
         });
+        this.miscs.forEach((e) => {
+            if (e === "")
+                return;
+            this.miscImages[e] = document.createElement("img");
+            this.miscImages[e].src = "res/orbs/misc/" + e + ".png";
+        });
     }
     randomize() {
         this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
         this.currentMouth = this.mouths[Math.floor(Math.random() * this.mouths.length)];
         this.currentEyes = this.eyes[Math.floor(Math.random() * this.eyes.length)];
+        this.currentMisc = this.miscs[Math.floor(Math.random() * this.miscs.length)];
     }
     updateLocalStorage() {
         localStorage.setItem("orb", JSON.stringify({
             color: this.color,
             mouth: this.currentMouth,
             eyes: this.currentEyes,
+            misc: this.currentMisc,
             eyesTransform: this.eyesTransform,
             mouthTransform: this.mouthTransform,
+            miscTransform: this.miscTransform,
             flipped: this.flipped
         }));
     }
@@ -99,6 +115,16 @@ export class Orb {
             ctx.scale(this.mouthTransform.scale, this.mouthTransform.scale);
             ctx.translate(-500, -500);
             ctx.drawImage(this.mouthImages[this.currentMouth], this.mouthTransform.x, this.mouthTransform.y + mouthOffsetY, 1000, 1000);
+            ctx.restore();
+        }
+        // Draw misc
+        if (this.currentMisc !== "") {
+            ctx.save();
+            ctx.translate(500, 500);
+            ctx.rotate((this.miscTransform.rotation / 180) * Math.PI);
+            ctx.scale(this.miscTransform.scale, this.miscTransform.scale);
+            ctx.translate(-500, -500);
+            ctx.drawImage(this.miscImages[this.currentMisc], this.miscTransform.x, this.miscTransform.y + mouthOffsetY, 1000, 1000);
             ctx.restore();
         }
         if (!asExport) {

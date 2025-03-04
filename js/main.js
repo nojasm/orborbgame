@@ -107,13 +107,17 @@ function studioBackToMenu() {
 }
 // Setup all elements in the UI and prepare Game Manager
 function setup() {
-    var _a;
+    var _a, _b;
     game = new GameManager();
     game.player = new Player();
     game.player.name = "orbian";
     game.player.orb = new Orb();
+    // Start music button
+    (_a = document.getElementById("front-card__music-start")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
+        game.music.start();
+    });
     // PLAY button
-    (_a = document.getElementById("front-card__play")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
+    (_b = document.getElementById("front-card__play")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", (event) => {
         playUIClickSound();
         closeCurtains(() => {
             game.canvas = document.getElementById("game__canvas");
@@ -165,7 +169,7 @@ function getNextEntry(list, entry, previous = false) {
     return list[newIndex];
 }
 function changeValueFromStudio(key, value) {
-    var _a, _b;
+    var _a, _b, _c;
     if (key === "color") {
         game.player.orb.color = getNextEntry(game.player.orb.colors, game.player.orb.color, value === -1);
     }
@@ -174,6 +178,9 @@ function changeValueFromStudio(key, value) {
     }
     else if (key === "eyes") {
         game.player.orb.currentEyes = getNextEntry((_b = game.player.orb) === null || _b === void 0 ? void 0 : _b.eyes, game.player.orb.currentEyes, value === -1);
+    }
+    else if (key === "misc") {
+        game.player.orb.currentMisc = getNextEntry((_c = game.player.orb) === null || _c === void 0 ? void 0 : _c.miscs, game.player.orb.currentMisc, value === -1);
     }
     game.player.orb.updateLocalStorage();
 }
@@ -238,7 +245,7 @@ let transformElements = {
 Object.keys(transformElements).forEach((e) => {
     [...document.getElementsByClassName(e)].forEach((e) => {
         e.onmousedown = (event) => {
-            var _a, _b, _c, _d, _e, _f, _g, _h;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
             let parent = (_b = (_a = event.target.parentElement) === null || _a === void 0 ? void 0 : _a.parentElement) === null || _b === void 0 ? void 0 : _b.getAttribute("studio-option");
             let transform = null;
             if (parent == "mouth") {
@@ -246,6 +253,9 @@ Object.keys(transformElements).forEach((e) => {
             }
             else if (parent == "eyes") {
                 transform = (_f = (_e = game.player) === null || _e === void 0 ? void 0 : _e.orb) === null || _f === void 0 ? void 0 : _f.eyesTransform;
+            }
+            else if (parent == "misc") {
+                transform = (_h = (_g = game.player) === null || _g === void 0 ? void 0 : _g.orb) === null || _h === void 0 ? void 0 : _h.miscTransform;
             }
             let btn = event.target.classList[0];
             if (btn == "studio-transform-up") {
@@ -272,7 +282,7 @@ Object.keys(transformElements).forEach((e) => {
             else if (btn == "studio-transform-rotate-right") {
                 transform.rotation += 5;
             }
-            (_h = (_g = game.player) === null || _g === void 0 ? void 0 : _g.orb) === null || _h === void 0 ? void 0 : _h.updateLocalStorage();
+            (_k = (_j = game.player) === null || _j === void 0 ? void 0 : _j.orb) === null || _k === void 0 ? void 0 : _k.updateLocalStorage();
         };
     });
 });

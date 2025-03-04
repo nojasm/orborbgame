@@ -54,10 +54,10 @@ button:hover {
     align-items: center;
 
     padding: 10px;
-    margin: 25px;
+    margin: 15px;
 
-    width: calc(100% - 50px);
-    border-radius: 10px;
+    width: calc(100% - 30px);
+    border-radius: 50px;
     background-color: rgb(19, 163, 62);
     box-sizing: border-box;
 }
@@ -65,6 +65,24 @@ button:hover {
 #front-card__play > img {
     height: 50px;
     filter: invert(1);
+}
+
+#front-card__music-start {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    padding: 5px;
+    margin: 0 auto;
+
+    width: calc(50%);
+    border-radius: 5px;
+    color: #222;
+    background-color: rgb(208, 216, 211);
+    box-sizing: border-box;
 }
 
 #fail {
