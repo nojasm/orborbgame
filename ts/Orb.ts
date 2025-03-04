@@ -29,11 +29,11 @@ export class Orb {
     constructor() {
         if (localStorage.getItem("orb")) {
             let lsOrb = JSON.parse(localStorage.getItem("orb")!);
-            this.color = lsOrb.color;
-            this.currentMouth = lsOrb.mouth;
-            this.currentEyes = lsOrb.eyes;
-            this.currentMisc = lsOrb.misc;
-            this.flipped = lsOrb.flipped;
+            this.color = lsOrb.color || "white";
+            this.currentMouth = lsOrb.mouth || "lips2";
+            this.currentEyes = lsOrb.eyes || "normal";
+            this.currentMisc = lsOrb.misc || "";
+            this.flipped = lsOrb.flipped || false;
             this.eyesTransform = lsOrb.eyesTransform || new Transform();
             this.mouthTransform = lsOrb.mouthTransform || new Transform();
             this.miscTransform = lsOrb.miscTransform || new Transform();
