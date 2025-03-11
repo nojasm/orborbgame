@@ -1,6 +1,5 @@
 var _a, _b, _c, _d, _e, _f;
 import { GameManager, GameState } from "./GameManager.js";
-import { Track } from "./Music.js";
 import { Orb } from "./Orb.js";
 import { Player } from "./Player.js";
 var game;
@@ -97,27 +96,36 @@ function backToMenu() {
 }
 function openStudio() {
     studioIsOpen = true;
-    game.music.switchTo(Track.STUDIO);
+    //game.music.switchTo(Track.STUDIO);
     document.getElementById("studio").style.display = "flex";
 }
 function studioBackToMenu() {
     studioIsOpen = false;
-    game.music.switchTo(Track.MENU);
+    //game.music.switchTo(Track.MENU);
     document.getElementById("studio").style.display = "none";
 }
 // Setup all elements in the UI and prepare Game Manager
 function setup() {
-    var _a, _b;
+    var _a;
     game = new GameManager();
     game.player = new Player();
     game.player.name = "orbian";
     game.player.orb = new Orb();
     // Start music button
-    (_a = document.getElementById("front-card__music-start")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
-        game.music.start();
+    let musicStartBtn = document.getElementById("front-card__music-start");
+    musicStartBtn.addEventListener("click", (event) => {
+        var _a, _b, _c;
+        if ((_a = game.music) === null || _a === void 0 ? void 0 : _a.paused) {
+            (_b = game.music) === null || _b === void 0 ? void 0 : _b.play();
+            musicStartBtn.innerText = "▶️ pause music :( ◀️";
+        }
+        else {
+            (_c = game.music) === null || _c === void 0 ? void 0 : _c.pause();
+            musicStartBtn.innerText = "▶️ play music ◀️";
+        }
     });
     // PLAY button
-    (_b = document.getElementById("front-card__play")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", (event) => {
+    (_a = document.getElementById("front-card__play")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
         playUIClickSound();
         closeCurtains(() => {
             game.canvas = document.getElementById("game__canvas");

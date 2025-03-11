@@ -24,6 +24,7 @@ export class SortOrbsMiniGame extends MiniGame {
     prepare() {
         this.lastMousePos = null;
         this.currentlyDraggingOrbIndex = null;
+        this.pickUpSound = new Audio("/res/sounds/Boing.mp3");
         while (true) {
             this.orbs = [];
             let minOrbs = 3 + (this.difficultyFactor * 5);
@@ -103,6 +104,7 @@ export class SortOrbsMiniGame extends MiniGame {
                 let d = Math.sqrt(Math.pow(mx - x, 2) + Math.pow(my - y, 2));
                 if (d < 50) {
                     this.currentlyDraggingOrbIndex = index;
+                    this.pickUpSound.cloneNode(true).play();
                 }
             });
         }

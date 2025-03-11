@@ -18,6 +18,7 @@ export class FindNorbMiniGame extends MiniGame {
     prepare() {
         this.size = Math.floor((this.difficultyFactor * 20) + 5);
         this.randomIndex = Math.floor(Math.random() * (this.size * this.size));
+        this.soundEffect = new Audio("/res/sounds/Bilop.mp3");
     }
     start() {
         super.start();
@@ -52,6 +53,7 @@ export class FindNorbMiniGame extends MiniGame {
                         this.ctx.arc(xPos, yPos, radius + 4, 0, 2 * Math.PI);
                         this.ctx.fill();
                         if (this.hasClicked) {
+                            this.soundEffect.cloneNode(true).play();
                             if (thisIndexIsNorb)
                                 this.setFinish();
                             else

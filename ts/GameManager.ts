@@ -52,13 +52,17 @@ export class GameManager {
     nGamesPlayed: number = 0;
     lastPlayedMiniGames: string[] = [];
     allMiniGames: any[] = [];
-    music: Music;
+    //music: Music;
+    music: HTMLAudioElement|null = null;
 
     constructor() {
         this.score = 0;
         this.lastPlayedMiniGames = [];
         this.allMiniGames = minigames;
-        this.music = new Music();
+        //this.music = new Music();
+        this.music = new Audio("/res/music/ORB (loopable).mp3");
+        this.music.volume = 0.4;
+        this.music.loop = true;
     }
 
     calculateDifficultyFactor(afterNGames: number) {
@@ -100,7 +104,7 @@ export class GameManager {
         
         this.ctx?.clearRect(0, 0, this.w, this.h);
 
-        if (this.currentGame.constructor.name === "SortOrbsMiniGame")
+        /*if (this.currentGame.constructor.name === "SortOrbsMiniGame")
             this.music.switchTo(Track.SORTING);
         else if (this.currentGame.constructor.name === "KillEmMiniGame")
             this.music.switchTo(Track.KILLEM);
@@ -109,7 +113,7 @@ export class GameManager {
         else if (this.currentGame.constructor.name === "OrbulateMiniGame")
             this.music.switchTo(Track.ORBULATE);
         else
-            this.music.switchTo(Track.DEFAULT);
+            this.music.switchTo(Track.DEFAULT);*/
     }
 
     startNextGame() {
@@ -213,7 +217,7 @@ export class GameManager {
                 } else {
                     this.currentGame.setFail();
                     this.state = GameState.FAILED;
-                    this.music.switchTo(Track.FAIL);
+                    //this.music.switchTo(Track.FAIL);
                 }
                 
                 return;
@@ -287,7 +291,7 @@ export class GameManager {
                 }, 1000);
             } else if (this.currentGame.failed) {
                 this.state = GameState.FAILED;
-                this.music.switchTo(Track.FAIL);
+                //this.music.switchTo(Track.FAIL);
             }
         }
     }

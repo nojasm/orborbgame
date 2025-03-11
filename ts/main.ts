@@ -116,13 +116,13 @@ function backToMenu() {
 
 function openStudio() {
     studioIsOpen = true;
-    game.music.switchTo(Track.STUDIO);
+    //game.music.switchTo(Track.STUDIO);
     document.getElementById("studio")!.style.display = "flex";
 }
 
 function studioBackToMenu() {
     studioIsOpen = false;
-    game.music.switchTo(Track.MENU);
+    //game.music.switchTo(Track.MENU);
     document.getElementById("studio")!.style.display = "none";
 }
 
@@ -135,8 +135,15 @@ function setup() {
     game.player.orb = new Orb();
 
     // Start music button
-    document.getElementById("front-card__music-start")?.addEventListener("click", (event) => {
-        game.music.start();
+    let musicStartBtn = document.getElementById("front-card__music-start")!;
+    musicStartBtn.addEventListener("click", (event) => {
+        if (game.music?.paused) {
+            game.music?.play();
+            musicStartBtn.innerText = "▶️ pause music :( ◀️";
+        } else {
+            game.music?.pause();
+            musicStartBtn.innerText = "▶️ play music ◀️";
+        }
     });
 
     // PLAY button

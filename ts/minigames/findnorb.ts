@@ -17,9 +17,12 @@ export class FindNorbMiniGame extends MiniGame {
 
     wall: number = 1.0;  // Wall that blocks view (1.0 - 0.0)
 
+    soundEffect: HTMLAudioElement|undefined;
+
     prepare() {
         this.size = Math.floor((this.difficultyFactor * 20) + 5);
         this.randomIndex = Math.floor(Math.random() * (this.size * this.size));
+        this.soundEffect = new Audio("/res/sounds/Bilop.mp3")
     }
 
     start() {
@@ -61,6 +64,7 @@ export class FindNorbMiniGame extends MiniGame {
                         this.ctx!.fill();
 
                         if (this.hasClicked) {
+                            (this.soundEffect!.cloneNode(true) as HTMLAudioElement).play();
                             if (thisIndexIsNorb) this.setFinish();
                             else this.setFail();
                         }

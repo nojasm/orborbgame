@@ -8,6 +8,7 @@ export class OrbulateMiniGame extends MiniGame {
         this.progress = 0.2;
         this.secondsSinceLastClick = 1;
         this.titleRotFromAngle = 0;
+        this.wetSounds = [];
     }
     prepare() {
         this.lastMousePos = null;
@@ -15,9 +16,19 @@ export class OrbulateMiniGame extends MiniGame {
         this.progress = 0.2;
         this.secondsSinceLastClick = 1.0;
         this.titleRotFromAngle = 0.0;
+        this.wetSounds.push(new Audio("/res/sounds/wet1.mp3"));
+        this.wetSounds.push(new Audio("/res/sounds/wet2.mp3"));
+        this.wetSounds.push(new Audio("/res/sounds/wet3.mp3"));
+        this.wetSounds.push(new Audio("/res/sounds/wet4.mp3"));
+        this.wetSounds.push(new Audio("/res/sounds/wet5.mp3"));
+        this.wetSounds.push(new Audio("/res/sounds/wet6.mp3"));
     }
     start() {
         super.start();
+    }
+    playRandomWetSound() {
+        let i = Math.floor(Math.random() * this.wetSounds.length);
+        this.wetSounds[i].cloneNode(true).play();
     }
     interpolatePoints(points, x) {
         if (x <= 0.0)
@@ -95,6 +106,7 @@ export class OrbulateMiniGame extends MiniGame {
             this.hasClicked = true;
             this.titleRotFromAngle = Math.random() * 0.2 - 0.1;
             this.secondsSinceLastClick = 0;
+            this.playRandomWetSound();
         }
         else if (ev.type == "mousemove") {
             this.lastMousePos = [ev.x, ev.y];

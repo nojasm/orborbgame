@@ -18,8 +18,12 @@ export class PingPorbMiniGame extends MiniGame {
 
     norbImg: HTMLImageElement|null = null;
 
+    barHitSoundEffect: HTMLAudioElement|undefined;
+
     prepare() {
         this.setPlayerWinsWhenTimeEnds();
+
+        this.barHitSoundEffect = new Audio("/res/sounds/Biomp.mp3");
 
         this.ballX = this.w / 2;
         this.ballY = this.h / 2;
@@ -88,6 +92,7 @@ export class PingPorbMiniGame extends MiniGame {
                     deflectionFactor = 1 + maxDeflection * deflectionFactor;
                     this.ballVY *= deflectionFactor;
                     this.speed += 2;
+                    (this.barHitSoundEffect!.cloneNode(true) as HTMLAudioElement).play();
                 } else {
                     this.setFail();
                 }
@@ -97,6 +102,7 @@ export class PingPorbMiniGame extends MiniGame {
                     this.ballVX *= -1;
                     this.ballX = this.w - (150 + ballSize / 2);
                     this.speed += 2;
+                    (this.barHitSoundEffect!.cloneNode(true) as HTMLAudioElement).play();
                 } else {
                     this.setFinish();
                 }

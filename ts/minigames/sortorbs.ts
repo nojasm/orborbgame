@@ -21,9 +21,12 @@ export class SortOrbsMiniGame extends MiniGame {
 
     orbs: Orb[] = [];
 
+    pickUpSound: HTMLAudioElement|undefined;
+
     prepare() {
         this.lastMousePos = null;
         this.currentlyDraggingOrbIndex = null;
+        this.pickUpSound = new Audio("/res/sounds/Boing.mp3");
 
         while (true) {
             this.orbs = [];
@@ -117,6 +120,7 @@ export class SortOrbsMiniGame extends MiniGame {
                 
                 if (d < 50) {
                     this.currentlyDraggingOrbIndex = index;
+                    (this.pickUpSound!.cloneNode(true) as HTMLAudioElement).play();
                 }
             });
         } else if (ev.type == "mouseup") {

@@ -5,7 +5,6 @@ import { PingPorbMiniGame } from "./minigames/pingporb.js";
 import { ShakeWormMiniGame } from "./minigames/shakeworm.js";
 import { SlingShotMiniGame } from "./minigames/slingshot.js";
 import { SortOrbsMiniGame } from "./minigames/sortorbs.js";
-import { Music, Track } from "./Music.js";
 var minigames = [
     FindNorbMiniGame,
     KillEmMiniGame,
@@ -43,10 +42,15 @@ export class GameManager {
         this.nGamesPlayed = 0;
         this.lastPlayedMiniGames = [];
         this.allMiniGames = [];
+        //music: Music;
+        this.music = null;
         this.score = 0;
         this.lastPlayedMiniGames = [];
         this.allMiniGames = minigames;
-        this.music = new Music();
+        //this.music = new Music();
+        this.music = new Audio("/res/music/ORB (loopable).mp3");
+        this.music.volume = 0.4;
+        this.music.loop = true;
     }
     calculateDifficultyFactor(afterNGames) {
         return -Math.exp(-0.05 * afterNGames) + 1;
@@ -80,7 +84,7 @@ export class GameManager {
         this.currentGame.h = this.h;
         this.currentGame.prepare();
         (_a = this.ctx) === null || _a === void 0 ? void 0 : _a.clearRect(0, 0, this.w, this.h);
-        if (this.currentGame.constructor.name === "SortOrbsMiniGame")
+        /*if (this.currentGame.constructor.name === "SortOrbsMiniGame")
             this.music.switchTo(Track.SORTING);
         else if (this.currentGame.constructor.name === "KillEmMiniGame")
             this.music.switchTo(Track.KILLEM);
@@ -89,7 +93,7 @@ export class GameManager {
         else if (this.currentGame.constructor.name === "OrbulateMiniGame")
             this.music.switchTo(Track.ORBULATE);
         else
-            this.music.switchTo(Track.DEFAULT);
+            this.music.switchTo(Track.DEFAULT);*/
     }
     startNextGame() {
         this.state = GameState.RUNNING;
@@ -179,7 +183,7 @@ export class GameManager {
                 else {
                     this.currentGame.setFail();
                     this.state = GameState.FAILED;
-                    this.music.switchTo(Track.FAIL);
+                    //this.music.switchTo(Track.FAIL);
                 }
                 return;
             }
@@ -245,7 +249,7 @@ export class GameManager {
             }
             else if (this.currentGame.failed) {
                 this.state = GameState.FAILED;
-                this.music.switchTo(Track.FAIL);
+                //this.music.switchTo(Track.FAIL);
             }
         }
     }
