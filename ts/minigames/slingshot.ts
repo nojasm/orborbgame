@@ -16,7 +16,7 @@ export class SlingShotMiniGame extends MiniGame {
     shootSoundEffect: HTMLAudioElement|undefined;
 
     prepare() {
-        this.shootSoundEffect = new Audio("/res/sounds/Pliu.mp3");
+        this.shootSoundEffect = new Audio("res/sounds/Pliu.mp3");
 
         this.norbImg = document.createElement("img");
         this.norbImg.src = "res/norb.png";

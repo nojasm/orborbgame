@@ -60,7 +60,7 @@ export class GameManager {
         this.lastPlayedMiniGames = [];
         this.allMiniGames = minigames;
         //this.music = new Music();
-        this.music = new Audio("/res/music/ORB (loopable).mp3");
+        this.music = new Audio("res/music/ORB (loopable).mp3");
         this.music.volume = 0.4;
         this.music.loop = true;
     }

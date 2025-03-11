@@ -23,7 +23,7 @@ export class PingPorbMiniGame extends MiniGame {
     prepare() {
         this.setPlayerWinsWhenTimeEnds();
 
-        this.barHitSoundEffect = new Audio("/res/sounds/Biomp.mp3");
+        this.barHitSoundEffect = new Audio("res/sounds/Biomp.mp3");
 
         this.ballX = this.w / 2;
         this.ballY = this.h / 2;

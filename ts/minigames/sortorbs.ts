@@ -26,7 +26,7 @@ export class SortOrbsMiniGame extends MiniGame {
     prepare() {
         this.lastMousePos = null;
         this.currentlyDraggingOrbIndex = null;
-        this.pickUpSound = new Audio("/res/sounds/Boing.mp3");
+        this.pickUpSound = new Audio("res/sounds/Boing.mp3");
 
         while (true) {
             this.orbs = [];

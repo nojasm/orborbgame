@@ -18,12 +18,12 @@ export class OrbulateMiniGame extends MiniGame {
         this.secondsSinceLastClick = 1.0;
         this.titleRotFromAngle = 0.0;
 
-        this.wetSounds.push(new Audio("/res/sounds/wet1.mp3"));
-        this.wetSounds.push(new Audio("/res/sounds/wet2.mp3"));
-        this.wetSounds.push(new Audio("/res/sounds/wet3.mp3"));
-        this.wetSounds.push(new Audio("/res/sounds/wet4.mp3"));
-        this.wetSounds.push(new Audio("/res/sounds/wet5.mp3"));
-        this.wetSounds.push(new Audio("/res/sounds/wet6.mp3"));
+        this.wetSounds.push(new Audio("res/sounds/wet1.mp3"));
+        this.wetSounds.push(new Audio("res/sounds/wet2.mp3"));
+        this.wetSounds.push(new Audio("res/sounds/wet3.mp3"));
+        this.wetSounds.push(new Audio("res/sounds/wet4.mp3"));
+        this.wetSounds.push(new Audio("res/sounds/wet5.mp3"));
+        this.wetSounds.push(new Audio("res/sounds/wet6.mp3"));
     }
 
     start() {

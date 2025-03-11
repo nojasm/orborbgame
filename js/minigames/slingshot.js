@@ -12,7 +12,7 @@ export class SlingShotMiniGame extends MiniGame {
         this.startDraggingPos = null;
     }
     prepare() {
-        this.shootSoundEffect = new Audio("/res/sounds/Pliu.mp3");
+        this.shootSoundEffect = new Audio("res/sounds/Pliu.mp3");
         this.norbImg = document.createElement("img");
         this.norbImg.src = "res/norb.png";
         let nNorbs = 3 + Math.random() * 3 + (Math.random() * 5 * this.difficultyFactor);

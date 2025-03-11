@@ -18,7 +18,7 @@ export class FindNorbMiniGame extends MiniGame {
     prepare() {
         this.size = Math.floor((this.difficultyFactor * 20) + 5);
         this.randomIndex = Math.floor(Math.random() * (this.size * this.size));
-        this.soundEffect = new Audio("/res/sounds/Bilop.mp3");
+        this.soundEffect = new Audio("res/sounds/Bilop.mp3");
     }
     start() {
         super.start();
