@@ -1,5 +1,8 @@
+import { CaptchaMiniGame } from "./minigames/captcha.js";
 import { FindNorbMiniGame } from "./minigames/findnorb.js";
+import { FindNorb2MiniGame } from "./minigames/findnorb2.js";
 import { KillEmMiniGame } from "./minigames/killem.js";
+import { ModerateMiniGame } from "./minigames/moderate.js";
 import { OrbulateMiniGame } from "./minigames/orbulate.js";
 import { PingPorbMiniGame } from "./minigames/pingporb.js";
 import { ShakeWormMiniGame } from "./minigames/shakeworm.js";
@@ -13,6 +16,11 @@ var minigames = [
     SortOrbsMiniGame,
     PingPorbMiniGame,
     SlingShotMiniGame
+];
+minigames = [
+    FindNorb2MiniGame,
+    CaptchaMiniGame,
+    ModerateMiniGame
 ];
 export var GameState;
 (function (GameState) {

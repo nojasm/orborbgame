@@ -4,11 +4,15 @@ export class TemplateMiniGame extends MiniGame {
     lastMousePos: any = null;
     hasClicked = false;
 
+    prepare() {
+        
+    }
+
     start() {
         super.start();
     }
 
-    update(deltaTime: number) {
+    update(state: GameState, deltaTime: number) {
         if (!this.ctx) return;
 
         let someCriteria = ...;
