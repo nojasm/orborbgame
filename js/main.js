@@ -1,4 +1,4 @@
-var _a, _b, _c, _d, _e, _f;
+var _a, _b, _c, _d, _e, _f, _g;
 import { GameManager, GameState } from "./GameManager.js";
 import { Orb } from "./Orb.js";
 import { Player } from "./Player.js";
@@ -239,6 +239,12 @@ function changeValueFromStudio(key, value) {
     link.download = "orb.png";
     link.href = canvas.toDataURL();
     link.click();
+});
+(_g = document.getElementById("studio-orb-copy")) === null || _g === void 0 ? void 0 : _g.addEventListener("click", (event) => {
+    var _a, _b;
+    playUIClickSound();
+    (_b = (_a = game.player) === null || _a === void 0 ? void 0 : _a.orb) === null || _b === void 0 ? void 0 : _b.copyAsBase64();
+    event.target.innerText = "COPIED!";
 });
 let transformElements = {
     "studio-transform-up": "",

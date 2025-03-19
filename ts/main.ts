@@ -276,6 +276,12 @@ document.getElementById("studio-orb-download")?.addEventListener("click", (event
     link.click();
 });
 
+document.getElementById("studio-orb-copy")?.addEventListener("click", (event) => {
+    playUIClickSound();
+    game.player?.orb?.copyAsBase64();
+    (event.target as HTMLButtonElement).innerText = "COPIED!";
+});
+
 let transformElements: any = {
     "studio-transform-up": "",
     "studio-transform-down": "",

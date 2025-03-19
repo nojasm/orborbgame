@@ -21,13 +21,14 @@ var minigames: any[] = [
     ShakeWormMiniGame,
     SortOrbsMiniGame,
     PingPorbMiniGame,
-    SlingShotMiniGame
-];
-
-minigames = [
+    SlingShotMiniGame,
     FindNorb2MiniGame,
     CaptchaMiniGame,
     ModerateMiniGame
+];
+
+minigames = [
+    FindNorb2MiniGame
 ];
 
 export enum GameState {

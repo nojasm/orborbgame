@@ -10,9 +10,9 @@ export class Orb {
     constructor() {
         this.flipped = false;
         this.colors = ["white", "#2f8ae9", "#f71836", "#a1afc3", "#c131ff", "#c9ac78", "#ff8d13", "#00ef0b", "#fee305", "#85dae7", "#497928", "#f14aae"];
-        this.mouths = ["", "norb", "drooling", "hmm", "kiss", "lips", "lips2", "normal", "o", "opened small", "opened", "rect", "sad", "sad2", "scared", "small", "smiling", "smoking", "straight", "talking"];
-        this.eyes = ["", "angry", "high", "low", "narrow", "normal", "pirate", "sad", "thinking", "wide", "glasses", "cyclops", "anime"];
-        this.miscs = ["", "amogus", "beard", "fuckmaga", "hat", "red"];
+        this.mouths = ["", "norb", "drooling", "hmm", "kiss", "lips", "lips2", "normal", "o", "opened small", "opened", "rect", "sad", "sad2", "scared", "small", "smiling", "smoking", "straight", "talking", "monster"];
+        this.eyes = ["", "angry", "high", "low", "narrow", "normal", "pirate", "sad", "thinking", "wide", "glasses", "cyclops", "anime", "huge", "long"];
+        this.miscs = ["", "amogus", "beard", "fuckmaga", "hat", "red", "beer", "exclamation", "hair", "werner", "monocle"];
         this.mouthTransform = new Transform();
         this.eyesTransform = new Transform();
         this.miscTransform = new Transform();
@@ -59,6 +59,11 @@ export class Orb {
             this.miscImages[e] = document.createElement("img");
             this.miscImages[e].src = "res/orbs/misc/" + e + ".png";
         });
+    }
+    copyAsBase64() {
+        this.updateLocalStorage();
+        let b64 = btoa(localStorage.getItem("orb"));
+        navigator.clipboard.writeText(b64);
     }
     randomize() {
         this.color = this.colors[Math.floor(Math.random() * this.colors.length)];

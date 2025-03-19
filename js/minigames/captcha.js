@@ -80,6 +80,10 @@ export class CaptchaMiniGame extends MiniGame {
         this.ctx.font = "35px Arial";
         this.ctx.fillStyle = "black";
         this.ctx.fillText("SELECT ALL ORBS", this.w / 2.0, 210);
+        // Draw captcha background
+        this.ctx.fillStyle = "#fff";
+        let b = this.boxes[0];
+        this.ctx.fillRect(b.x, b.y, this.maxTotalSize, this.maxTotalSize);
         // Draw captcha boxes
         for (var i = 0; i < this.boxes.length; i++) {
             let b = this.boxes[i];

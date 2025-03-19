@@ -14,9 +14,9 @@ export class Orb {
     flipped: boolean = false;
 
     colors: string[] = ["white", "#2f8ae9", "#f71836", "#a1afc3", "#c131ff", "#c9ac78", "#ff8d13", "#00ef0b", "#fee305", "#85dae7", "#497928", "#f14aae"];
-    mouths: string[] = ["", "norb", "drooling", "hmm", "kiss", "lips", "lips2", "normal", "o", "opened small", "opened", "rect", "sad", "sad2", "scared", "small", "smiling", "smoking", "straight", "talking"];
-    eyes: string[] = ["", "angry", "high", "low", "narrow", "normal", "pirate", "sad", "thinking", "wide", "glasses", "cyclops", "anime"];
-    miscs: string[] = ["", "amogus", "beard", "fuckmaga", "hat", "red"];
+    mouths: string[] = ["", "norb", "drooling", "hmm", "kiss", "lips", "lips2", "normal", "o", "opened small", "opened", "rect", "sad", "sad2", "scared", "small", "smiling", "smoking", "straight", "talking", "monster"];
+    eyes: string[] = ["", "angry", "high", "low", "narrow", "normal", "pirate", "sad", "thinking", "wide", "glasses", "cyclops", "anime", "huge", "long"];
+    miscs: string[] = ["", "amogus", "beard", "fuckmaga", "hat", "red", "beer", "exclamation", "hair", "werner", "monocle"];
 
     mouthTransform: Transform = new Transform();
     eyesTransform: Transform = new Transform();
@@ -69,6 +69,12 @@ export class Orb {
             this.miscImages[e] = document.createElement("img");
             this.miscImages[e].src = "res/orbs/misc/" + e + ".png";
         });
+    }
+
+    copyAsBase64() {
+        this.updateLocalStorage();
+        let b64 = btoa(localStorage.getItem("orb")!);
+        navigator.clipboard.writeText(b64);
     }
 
     randomize() {
