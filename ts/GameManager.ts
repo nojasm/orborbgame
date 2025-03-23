@@ -27,10 +27,6 @@ var minigames: any[] = [
     ModerateMiniGame
 ];
 
-minigames = [
-    FindNorb2MiniGame
-];
-
 export enum GameState {
     NONE,
     PREPARING,
