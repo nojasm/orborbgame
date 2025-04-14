@@ -20,9 +20,6 @@ var minigames = [
     CaptchaMiniGame,
     ModerateMiniGame
 ];
-minigames = [
-    FindNorb2MiniGame
-];
 export var GameState;
 (function (GameState) {
     GameState[GameState["NONE"] = 0] = "NONE";
